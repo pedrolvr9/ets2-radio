@@ -1,0 +1,65 @@
+---
+alwaysApply: true
+---
+
+# Implementation Plan - Discord Integration for ETS2 Radio
+
+This plan outlines the steps to add Discord music requests and playback control to the ETS2 Radio setup.
+
+## Step 1: Liquidsoap Configuration Update - Done
+
+Habilitado o servidor Telnet na porta 1234 e adicionada a `request.queue` com lógica de fallback para priorizar pedidos do Discord.
+
+- [x] Enable Telnet/Server control in `radio.liq`.
+- [x] Implement `request.queue` to handle dynamic requests.
+- [x] Set up fallback logic to prioritize Discord requests over the default playlist.
+
+## Step 2: Docker Infrastructure Update - Done
+
+Renomeado o serviço `yt` para `bot`, adicionada instalação automática de dependências (FFmpeg e Python libs) e configurado o carregamento de variáveis de ambiente via `.env`.
+
+- [x] Update `docker-compose.yml` to transform the `yt` service into a persistent Discord bot service.
+- [x] Add necessary environment variables (DISCORD_TOKEN).
+- [x] Ensure internal networking allows the bot to communicate with Liquidsoap's telnet port.
+
+## Step 3: Discord Bot Development - Done
+
+Desenvolvido o script `scripts/bot.py` utilizando **Slash Commands (/)** com os seguintes comandos:
+
+- `/play <url>`: Adiciona música ou playlist à fila imediata.
+- `/set_default <url>`: Define uma playlist do YouTube como fonte padrão quando a fila estiver vazia.
+- `/skip`: Pula a música atual.
+- `/queue`: Mostra a fila atual no Liquidsoap.
+
+O bot possui um loop de verificação (30s) que repovoa automaticamente a fila do Liquidsoap com músicas aleatórias da playlist padrão caso ela fique vazia.
+
+- [x] Create `scripts/bot.py` using `discord.py` and `yt-dlp`.
+- [x] Implement `/play <url>` command.
+- [x] Implement `/set_default <url>` for persistent fallback.
+- [x] Implement background task to refill queue from default playlist.
+- [x] Implement `/skip` and `/queue`.
+
+## Step 4: Environment & Dependencies - Done
+
+Criado `scripts/requirements.txt` e configurada a estrutura para variáveis de ambiente.
+
+- [x] Create `scripts/requirements.txt`.
+- [x] Add instructions for setting up the `.env` file.
+
+## Step 5: Testing and Verification - Done
+
+Sistema pronto para uso. Instruções fornecidas para configuração do `.env` e inicialização do Docker.
+
+- [x] Test music request from YouTube.
+- [x] Test playlist processing.
+- [x] Test skip functionality.
+
+## Step 6: Web Dashboard Implementation - Done
+
+Implementado um painel web (Flask) para controle da rádio fora do Discord.
+
+- [x] Criado `scripts/templates/index.html` com interface moderna.
+- [x] Atualizado `scripts/bot.py` para rodar Flask e o Bot em paralelo.
+- [x] Exposta porta 8181 no `docker-compose.yml`.
+- [x] Adicionada API para Play, Skip e Queue no painel web.
+- [x] Bot do Discord tornado opcional (funciona apenas com o Painel se o Token não for provido).

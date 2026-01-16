@@ -1,0 +1,48 @@
+services:
+  icecast:
+    image: moul/icecast
+    container_name: ets2-icecast
+    environment:
+      - ICECAST_SOURCE_PASSWORD=hackme
+      - ICECAST_ADMIN_PASSWORD=hackme
+      - ICECAST_PASSWORD=hackme
+    ports:
+      - "24015:9090"
+    volumes:
+      - ./icecast/icecast.xml:/etc/icecast2/icecast.xml:ro
+    restart: unless-stopped
+
+  liquidsoap:
+    image: savonet/liquidsoap:v2.2.5
+    container_name: ets2-liquidsoap
+    user: root
+    depends_on:
+      - icecast
+    volumes:
+      - ./liquidsoap:/radio
+      - ./data:/data
+      - ./liquidsoap/yt-dlp-audio.sh:/usr/local/bin/yt-dlp-audio
+    entrypoint: ""
+    command: >
+      sh -c "apt-get update && apt-get install -y yt-dlp ffmpeg curl nodejs && 
+             chmod +x /usr/local/bin/yt-dlp-audio &&
+             liquidsoap /radio/radio.liq"
+    restart: unless-stopped
+
+  bot:
+    image: python:3.11-slim
+    container_name: ets2-bot
+    depends_on:
+      - liquidsoap
+    volumes:
+      - ./data:/data
+      - ./scripts:/app
+    working_dir: /app
+    env_file: .env
+    ports:
+      - "24016:8080"
+    command: >
+      sh -c "apt-get update && apt-get install -y ffmpeg &&
+             pip install --no-cache-dir -r requirements.txt &&
+             python bot.py"
+    restart: unless-stopped

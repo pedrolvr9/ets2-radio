@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ETS2 Radio Control</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #0f0f0f;
+        --card-bg: #1a1a1a;
+        --accent-color: #f39c12;
+        --accent-hover: #e67e22;
+        --text-color: #e0e0e0;
+        --text-muted: #888;
+        --input-bg: #252525;
+        --danger-color: #c0392b;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+      }
+
+      .container {
+        max-width: 600px;
+      }
+
+      .card {
+        background-color: var(--card-bg);
+        border: 1px solid #333;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        margin-bottom: 25px;
+        transition: transform 0.3s ease;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        color: var(--accent-color);
+        font-weight: 800;
+        letter-spacing: -1px;
+        text-transform: uppercase;
+        text-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        font-weight: 300;
+      }
+
+      .form-control {
+        background-color: var(--input-bg);
+        border: 1px solid #444;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px 0 0 12px;
+      }
+
+      .form-control:focus {
+        background-color: #2a2a2a;
+        border-color: var(--accent-color);
+        color: white;
+        box-shadow: none;
+      }
+
+      .btn-primary {
+        background-color: var(--accent-color);
+        border: none;
+        padding: 12px 25px;
+        font-weight: 600;
+        border-radius: 0 12px 12px 0;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-danger {
+        background-color: var(--danger-color);
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+      }
+
+      .btn-secondary {
+        background-color: #333;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+      }
+
+      .btn-secondary:hover {
+        background-color: #444;
+      }
+
+      .queue-container {
+        background-color: #0a0a0a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 15px;
+        font-family: "Fira Code", monospace;
+        color: #00d4ff;
+        font-size: 0.85rem;
+        max-height: 250px;
+        overflow-y: auto;
+      }
+
+      .queue-container::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .queue-container::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 10px;
+      }
+
+      .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-title i {
+        margin-right: 10px;
+        color: var(--accent-color);
+      }
+
+      .alert {
+        border-radius: 12px;
+        border: none;
+        background-color: #1a1a1a;
+        color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-close {
+        filter: invert(1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5">
+      <div class="header">
+        <h1>🚛 ETS2 Radio Control</h1>
+        <p class="text-muted">A trilha sonora perfeita para a sua carga</p>
+      </div>
+
+      <div class="card p-4">
+        <div class="section-title">➕ SOLICITAR MÚSICA</div>
+        <div class="input-group mb-2">
+          <input
+            type="text"
+            id="urlInput"
+            class="form-control"
+            placeholder="Cole o link do YouTube aqui..."
+          />
+          <button class="btn btn-primary" onclick="requestMusic()" id="btnPlay">
+            ADICIONAR
+          </button>
+        </div>
+        <small class="text-muted"
+          >Vídeos individuais ou playlists completas são aceitos.</small
+        >
+      </div>
+
+      <div class="card p-4">
+        <div class="section-title">🎵 NO AR AGORA</div>
+        <div
+          id="nowPlaying"
+          class="mb-4"
+          style="
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+          "
+        >
+          Carregando...
+        </div>
+
+        <div class="section-title">🎮 CABINE DE COMANDO</div>
+        <div class="d-flex gap-2 mb-4">
+          <button class="btn btn-danger flex-grow-1" onclick="skipMusic()">
+            ⏭️ PRÓXIMA MÚSICA
+          </button>
+          <button class="btn btn-secondary" onclick="updateStatus()">
+            🔄 ATUALIZAR
+          </button>
+        </div>
+
+        <div class="section-title">📜 FILA DE REPRODUÇÃO</div>
+        <div id="queueContent" class="queue-container">Carregando...</div>
+      </div>
+
+      <div id="alertPlaceholder"></div>
+    </div>
+
+    <script>
+      const API_URL = "";
+
+      async function requestMusic() {
+        const url = document.getElementById("urlInput").value;
+        if (!url) return;
+
+        const btn = document.getElementById("btnPlay");
+        btn.disabled = true;
+        btn.innerText = "...";
+
+        try {
+          const response = await fetch(`${API_URL}/api/play`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
+          });
+          const data = await response.json();
+          showAlert(
+            data.message,
+            data.status === "success" ? "success" : "danger"
+          );
+          document.getElementById("urlInput").value = "";
+          setTimeout(updateStatus, 2000);
+        } catch (e) {
+          showAlert("Erro de conexão com o servidor", "danger");
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "ADICIONAR";
+        }
+      }
+
+      async function skipMusic() {
+        try {
+          const response = await fetch(`${API_URL}/api/skip`, {
+            method: "POST",
+          });
+          const data = await response.json();
+          showAlert(data.message, "warning");
+          setTimeout(updateStatus, 1000);
+        } catch (e) {
+          showAlert("Erro ao pular música", "danger");
+        }
+      }
+
+      async function updateStatus() {
+        updateNowPlaying();
+        updateQueue();
+      }
+
+      async function updateNowPlaying() {
+        try {
+          const response = await fetch(`${API_URL}/api/now_playing`);
+          const data = await response.json();
+          const title = data.metadata?.title || "Silêncio ou Playlist Padrão";
+          document.getElementById("nowPlaying").innerText = `📻 ${title}`;
+        } catch (e) {
+          document.getElementById("nowPlaying").innerText = "Erro ao carregar.";
+        }
+      }
+
+      async function updateQueue() {
+        try {
+          const response = await fetch(`${API_URL}/api/queue`);
+          const data = await response.json();
+          const container = document.getElementById("queueContent");
+
+          if (data.queue && data.queue.length > 0) {
+            container.innerHTML = data.queue
+              .map(
+                (item, index) => `
+              <div class="mb-2 pb-2 border-bottom border-secondary">
+                <span class="text-muted">#${index + 1}</span> 
+                <strong style="${item.is_manual ? "color: #00ffcc;" : ""}">${
+                  item.title
+                }</strong>
+                ${
+                  item.is_manual
+                    ? '<span class="badge bg-info ms-2" style="font-size: 0.6rem;">PEDIDO</span>'
+                    : ""
+                }
+              </div>
+            `
+              )
+              .join("");
+          } else {
+            container.innerText =
+              "A fila está vazia (tocando playlist padrão).";
+          }
+        } catch (e) {
+          document.getElementById("queueContent").innerText =
+            "Falha ao carregar a fila.";
+        }
+      }
+
+      function showAlert(message, type) {
+        const placeholder = document.getElementById("alertPlaceholder");
+        placeholder.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        setTimeout(() => {
+          const alert = document.querySelector(".alert");
+          if (alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+          }
+        }, 5000);
+      }
+
+      updateStatus();
+      setInterval(updateStatus, 5000);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

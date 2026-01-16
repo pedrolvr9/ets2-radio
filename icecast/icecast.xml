@@ -1,0 +1,33 @@
+<icecast>
+  <location>Brazil</location>
+  <admin>pedro_lvr12@outlook.com</admin>
+
+  <limits>
+    <clients>100</clients>
+    <sources>5</sources>
+  </limits>
+
+  <authentication>
+    <source-password>hackme</source-password>
+    <admin-password>hackme</admin-password>
+  </authentication>
+
+  <listen-socket>
+    <port>9090</port>
+  </listen-socket>
+
+  <hostname>localhost</hostname>
+
+  <logging>
+    <accesslog>-</accesslog>
+    <errorlog>-</errorlog>
+    <loglevel>3</loglevel>
+  </logging>
+
+  <fileserve>1</fileserve>
+
+  <mount type="normal">
+    <mount-name>/ets2</mount-name>
+    <public>1</public>
+  </mount>
+</icecast>

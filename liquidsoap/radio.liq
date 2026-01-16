@@ -2,7 +2,7 @@
 settings.log.stdout := true
 settings.log.file := false
 settings.init.allow_root := true
-settings.protocol.youtube_dl.timeout := 600.0
+settings.protocol.youtube_dl.timeout := 1200.0
 settings.protocol.youtube_dl.path := "/usr/local/bin/yt-dlp-audio"
 
 # Carregar senhas do ambiente

@@ -1,33 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
-# Decodifica cookies em Base64 se a variável existir e o arquivo ainda não existir
+# Arquivo para log de erros
+LOG_FILE="/data/yt-dlp-errors.log"
+
+# Decodifica cookies se a variável Base64 existir e o arquivo não
 if [ -n "$YT_COOKIES_BASE64" ] && [ ! -f "/data/cookies.txt" ]; then
-    echo "$YT_COOKIES_BASE64" | base64 -d > /data/cookies.txt 2>/dev/null
+    printf "%s" "$YT_COOKIES_BASE64" | base64 -d > /data/cookies.txt 2>>$LOG_FILE
 fi
 
-# O Liquidsoap envia argumentos como -q -f best --no-playlist etc.
-# Queremos substituir o "-f best" por "-f bestaudio/best" para garantir qualidade e evitar erros de formato.
-
-final_args=()
-skip=0
-
-for arg in "$@"; do
-    if [ $skip -eq 1 ]; then
-        skip=0
-        continue
-    fi
-    if [ "$arg" == "-f" ]; then
-        final_args+=("-f")
-        final_args+=("bestaudio/best")
-        skip=1
-    else
-        final_args+=("$arg")
-    fi
-done
-
-# Se não houver cookies, roda normal. Se houver, usa.
+# Prepara os argumentos de cookies
+COOKIE_ARG=""
 if [ -f "/data/cookies.txt" ]; then
-    exec /usr/bin/yt-dlp --cookies /data/cookies.txt "${final_args[@]}"
-else
-    exec /usr/bin/yt-dlp "${final_args[@]}"
+    COOKIE_ARG="--cookies /data/cookies.txt"
 fi
+
+# Executa o yt-dlp repassando TODOS os argumentos do Liquidsoap ($@)
+exec /usr/bin/yt-dlp $COOKIE_ARG "$@" 2>>$LOG_FILE

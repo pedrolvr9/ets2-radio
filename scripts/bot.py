@@ -113,11 +113,6 @@ ytdl_format_options = {
     'noplaylist': False,
     'quiet': True,
     'extract_flat': True, # Garante que pegamos apenas o link do YouTube, não o link direto resolvido
-    'extractor_args': {
-        'youtube': {
-            'player_client': ['ios', 'android'],
-        }
-    }
 }
 
 # Suporte a cookies via Base64 para bypass de bloqueio

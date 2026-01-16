@@ -55,7 +55,7 @@ Um sistema completo de rádio personalizada para o **Euro Truck Simulator 2**, i
 3. **(Opcional) Bypass de Cookies (Base64):**
    Se o YouTube bloquear seu servidor (erro: _Sign in to confirm you're not a bot_):
    - Exporte os cookies do YouTube (extensão "Get cookies.txt LOCALLY").
-   - Converta o conteúdo do arquivo para Base64. 
+   - Converta o conteúdo do arquivo para Base64.
      - No Linux/Mac: `cat cookies.txt | base64 -w 0`
      - No Windows (PowerShell): `[Convert]::ToBase64String([IO.File]::ReadAllBytes("cookies.txt"))`
    - Adicione o resultado na variável `YT_COOKIES_BASE64` no seu `.env` ou no painel do Coolify.

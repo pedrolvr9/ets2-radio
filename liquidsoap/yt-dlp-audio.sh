@@ -19,9 +19,9 @@ if [ -n "$YT_COOKIES_BASE64" ]; then
     echo "$YT_COOKIES_BASE64" | base64 -d > /data/cookies.txt
 fi
 
-# Agora forçamos o nosso formato ideal e tentamos impersonar um cliente iOS para evitar bloqueio
+# Agora forçamos o nosso formato ideal
 if [ -f "/data/cookies.txt" ]; then
-    exec /usr/bin/yt-dlp --cookies /data/cookies.txt --extractor-args "youtube:player_client=ios,android" -f "bestaudio/best" "${args[@]}"
+    exec /usr/bin/yt-dlp --cookies /data/cookies.txt -f "bestaudio/best" "${args[@]}"
 else
-    exec /usr/bin/yt-dlp --extractor-args "youtube:player_client=ios,android" -f "bestaudio/best" "${args[@]}"
+    exec /usr/bin/yt-dlp -f "bestaudio/best" "${args[@]}"
 fi

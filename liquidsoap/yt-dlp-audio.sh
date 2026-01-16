@@ -13,5 +13,9 @@ for arg in "$@"; do
     fi
     args+=("$arg")
 done
-# Agora forçamos o nosso formato ideal
-exec /usr/bin/yt-dlp -f "bestaudio/best" "${args[@]}"
+# Agora forçamos o nosso formato ideal e tentamos impersonar um cliente iOS para evitar bloqueio
+if [ -f "/data/cookies.txt" ]; then
+    exec /usr/bin/yt-dlp --cookies /data/cookies.txt --extractor-args "youtube:player_client=ios,android" -f "bestaudio/best" "${args[@]}"
+else
+    exec /usr/bin/yt-dlp --extractor-args "youtube:player_client=ios,android" -f "bestaudio/best" "${args[@]}"
+fi

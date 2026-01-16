@@ -1,71 +1,106 @@
-# ETS2 Radio
+# 🚛 ETS2 Radio System
 
-Sistema de rádio personalizada para Euro Truck Simulator 2, com integração com Discord, Painel Web e suporte a playlists do YouTube via Liquidsoap e Icecast.
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
+[![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/)
 
-## 🚀 Tecnologias Utilizadas
+Um sistema completo de rádio personalizada para o **Euro Truck Simulator 2**, integrando playlists do YouTube, bot de Discord e um painel administrativo web moderno.
 
-- **Docker & Docker Compose**: Orquestração de containers.
-- **Liquidsoap**: Motor de áudio para streaming e gerenciamento de filas.
-- **Icecast**: Servidor de streaming de áudio.
-- **Python (Discord.py & Flask)**: Bot para comandos e Painel Web para controle da rádio.
-- **yt-dlp**: Para processar links do YouTube em tempo real.
+---
 
-## 📋 Pré-requisitos
+## 🌟 Funcionalidades
+
+- 🎵 **Streaming via Icecast/Liquidsoap**: Áudio de alta qualidade com transições crossfade.
+- 🤖 **Integração com Discord**: Comandos Slash (/) para controlar a rádio diretamente do seu servidor.
+- 🌐 **Painel Web**: Interface moderna para gerenciar a fila e pular músicas sem precisar do Discord.
+- 🔄 **Fila Automática**: Nunca fica em silêncio. Se a fila manual esvaziar, o sistema toca músicas aleatórias de uma playlist padrão.
+- 🛠️ **Bypass de Bloqueio**: Configurado com técnicas de impersonificação e suporte a cookies para evitar bloqueios do YouTube em servidores (VPS).
+
+---
+
+## 🚀 Tecnologias
+
+- **Liquidsoap**: Motor de automação de áudio.
+- **Icecast**: Servidor de streaming.
+- **Flask**: API e Painel Web.
+- **Discord.py**: Automação do bot.
+- **yt-dlp**: Extração de áudio em tempo real.
+
+---
+
+## 🛠️ Instalação e Configuração
+
+### 📋 Pré-requisitos
 
 - Docker e Docker Compose instalados.
-- Token de Bot do Discord (opcional, mas recomendado para comandos via chat).
+- Um Token de Bot no [Discord Developer Portal](https://discord.com/developers/applications).
 
-## 🛠️ Configuração
+### ⚙️ Passo a Passo
 
-1. Clone o repositório:
+1. **Clone o projeto:**
 
    ```bash
-   git clone <url-do-repositorio>
+   git clone https://github.com/pedrolvr9/ets2-radio.git
    cd ets2-radio
    ```
 
-2. Crie o arquivo `.env` baseado no exemplo:
+2. **Configure o ambiente:**
+
    ```bash
    cp .env.example .env
    ```
 
-## 🚀 Como Rodar
+   Edite o `.env` e insira seu `DISCORD_TOKEN` e as senhas desejadas para o Icecast.
 
-### Modo Desenvolvimento / Local
+3. **(Opcional) Bypass de Cookies:**
+   Se o YouTube bloquear seu servidor (erro: _Sign in to confirm you're not a bot_):
+   - Use a extensão **Get cookies.txt LOCALLY** no navegador.
+   - Exporte os cookies do YouTube.
+   - Salve como `data/cookies.txt`. O sistema carregará automaticamente.
 
-Para rodar o projeto localmente e ver os logs em tempo real:
+---
 
-```bash
-docker-compose up
-```
+## 🏃 Como Executar
 
-- **Painel Web**: [http://localhost:24016](http://localhost:24016)
-- **Stream de Áudio**: [http://localhost:24015/ets2](http://localhost:24015/ets2)
-- **Admin Icecast**: [http://localhost:24015](http://localhost:24015) (User: `admin` / Pass: `hackme`)
-
-### Modo Produção
-
-Para rodar em background (detach mode):
+### Local / Desenvolvimento
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
-Para atualizar o sistema após mudanças no código:
+### Produção (Background)
 
 ```bash
 docker-compose up -d --build
 ```
 
-## 🎮 Comandos do Bot (Discord)
+### 🔗 Acessos Rápidos
 
-- `/play <url>`: Adiciona uma música ou playlist do YouTube à fila manual.
-- `/skip`: Pula a música atual.
-- `/set_default <url>`: Define a playlist padrão que toca quando a fila manual está vazia.
+- **Painel Administrativo**: `http://localhost:24016`
+- **Link do Stream (para o ETS2)**: `http://localhost:24015/ets2`
+- **Admin do Icecast**: `http://localhost:24015` (User: `admin`)
 
-## 📁 Estrutura do Projeto
+---
 
-- `/icecast`: Configurações do servidor Icecast.
-- `/liquidsoap`: Scripts de lógica da rádio e processamento de áudio.
-- `/scripts`: Código fonte do Bot Discord e Painel Flask.
-- `/data`: Volume persistente para cache e downloads temporários.
+## 🎮 Comandos do Discord
+
+| Comando              | Descrição                                                   |
+| :------------------- | :---------------------------------------------------------- |
+| `/play <url>`        | Adiciona uma música ou playlist do YouTube à fila.          |
+| `/skip`              | Pula a música que está tocando agora.                       |
+| `/set_default <url>` | Define a playlist que tocará quando a rádio estiver ociosa. |
+
+---
+
+## 📁 Estrutura do Repositório
+
+- `icecast/`: Configurações e Dockerfile do servidor de stream.
+- `liquidsoap/`: Lógica da rádio, crossfade e processamento de áudio.
+- `scripts/`: Backend Python (Bot Discord e Painel Flask).
+- `data/`: Volume compartilhado para cookies, cache e logs.
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.

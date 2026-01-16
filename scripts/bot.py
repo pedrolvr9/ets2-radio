@@ -113,7 +113,18 @@ ytdl_format_options = {
     'noplaylist': False,
     'quiet': True,
     'extract_flat': True, # Garante que pegamos apenas o link do YouTube, não o link direto resolvido
+    'extractor_args': {
+        'youtube': {
+            'player_client': ['ios', 'android'],
+        }
+    }
 }
+
+# Verifica se existe arquivo de cookies para evitar bloqueio do YouTube
+if os.path.exists('/data/cookies.txt'):
+    ytdl_format_options['cookiefile'] = '/data/cookies.txt'
+    print("🍪 Cookies do YouTube carregados de /data/cookies.txt", flush=True)
+
 ytdl = yt_dlp.YoutubeDL(ytdl_format_options)
 
 async def process_play_request(url):

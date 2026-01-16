@@ -5,6 +5,10 @@ settings.init.allow_root := true
 settings.protocol.youtube_dl.timeout := 600.0
 settings.protocol.youtube_dl.path := "/usr/local/bin/yt-dlp-audio"
 
+# Carregar senhas do ambiente
+icecast_password = os.getenv("ICECAST_SOURCE_PASSWORD")
+icecast_password = if icecast_password == "" then "hackme" else icecast_password end
+
 # Habilitar controle via telnet (porta interna para o bot)
 settings.server.telnet := true
 settings.server.telnet.bind_addr := "0.0.0.0"
@@ -33,7 +37,7 @@ output.icecast(
   %mp3(bitrate=320),
   host="icecast",
   port=9090,
-  password="hackme",
+  password=icecast_password,
   mount="/ets2",
   name="Minha Rádio ETS2",
   description="YouTube Playlist Shuffle + Crossfade",

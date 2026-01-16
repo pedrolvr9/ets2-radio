@@ -60,6 +60,14 @@ Implementado um painel web (Flask) para controle da rádio fora do Discord.
 
 - [x] Criado `scripts/templates/index.html` com interface moderna.
 - [x] Atualizado `scripts/bot.py` para rodar Flask e o Bot em paralelo.
-- [x] Exposta porta 8181 no `docker-compose.yml`.
+- [x] Exposta porta 24016 no `docker-compose.yml`.
 - [x] Adicionada API para Play, Skip e Queue no painel web.
-- [x] Bot do Discord tornado opcional (funciona apenas com o Painel se o Token não for provido).
+- [x] Bot do Discord tornado opcional.
+
+## Step 7: Docker Optimization & Deploy Robustness - Done
+
+Otimização do ambiente Docker para deploy em produção (Coolify).
+
+- [x] Criados Dockerfiles para Icecast, Liquidsoap e Bot para evitar instalações em runtime.
+- [x] Resolvido erro de montagem de volumes no Coolify injetando configurações via build.
+- [x] Implementada injeção dinâmica de senhas no Icecast via variáveis de ambiente.

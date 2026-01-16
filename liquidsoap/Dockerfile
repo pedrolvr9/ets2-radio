@@ -2,21 +2,14 @@ FROM savonet/liquidsoap:v2.2.5
 
 USER root
 
-# Instala ferramentas essenciais
-RUN apt-get update && apt-get install -y curl ffmpeg python3 unzip && \
-    # Instala Deno (Recomendado pela Wiki do yt-dlp)
-    curl -fsSL https://deno.land/install.sh | sh && \
-    # Instala Node.js 20 como fallback
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    # Baixa o binário mais recente do yt-dlp
-    curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/bin/yt-dlp && \
-    chmod a+rx /usr/bin/yt-dlp && \
+# Instala ferramentas essenciais, Python e Node.js
+RUN apt-get update && apt-get install -y curl ffmpeg python3 python3-pip python3-venv nodejs unzip && \
+    # Cria um ambiente virtual e instala o yt-dlp com EJS embutido (Opção 1 da Wiki)
+    python3 -m venv /opt/yt-dlp-env && \
+    /opt/yt-dlp-env/bin/pip install -U "yt-dlp[default]" && \
+    # Cria um link simbólico para o yt-dlp ficar acessível globalmente
+    ln -s /opt/yt-dlp-env/bin/yt-dlp /usr/bin/yt-dlp && \
     rm -rf /var/lib/apt/lists/*
-
-# Configura o Path do Deno
-ENV DENO_INSTALL="/root/.deno"
-ENV PATH="$DENO_INSTALL/bin:$PATH"
 
 WORKDIR /radio
 

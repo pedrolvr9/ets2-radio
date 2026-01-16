@@ -49,7 +49,7 @@ def send_to_liquidsoap(command):
     except Exception as e:
         return f"Error connecting to Liquidsoap: {e}"
 
-def push_url_to_liquidsoap(url, queue="manual_queue"):
+def push_url_to_liquidsoap(url, title=None, queue="manual_queue"):
     # Se for um link direto do googlevideo, ignoramos pois ele expira e é amarrado ao IP
     if "googlevideo.com" in url:
         print(f"⚠️ Aviso: Link direto do googlevideo detectado e ignorado ({queue}).")
@@ -60,8 +60,16 @@ def push_url_to_liquidsoap(url, queue="manual_queue"):
         if not url.startswith("youtube-dl:"):
             url = f"youtube-dl:{url}"
     
-    print(f"Pushing to Liquidsoap ({queue}): {url}", flush=True)
-    return send_to_liquidsoap(f"{queue}.push {url}")
+    # Se tivermos um título, usamos o protocolo annotate: do Liquidsoap
+    if title:
+        # Escapa aspas no título para não quebrar o comando telnet
+        clean_title = title.replace('"', '\\"')
+        command = f'{queue}.push annotate:title="{clean_title}":{url}'
+    else:
+        command = f"{queue}.push {url}"
+    
+    print(f"Pushing to Liquidsoap ({queue}): {url} (Title: {title})", flush=True)
+    return send_to_liquidsoap(command)
 
 async def check_queue_background_task():
     global cached_default_urls
@@ -143,17 +151,17 @@ async def process_play_request(url):
             count = 0
             for entry in data['entries']:
                 if entry:
-                    m_url = entry.get('url')
-                    # Se o m_url for um link direto (googlevideo), tentamos pegar o original ou web_url
-                    original_url = entry.get('webpage_url') or m_url
-                    if original_url:
-                        push_url_to_liquidsoap(original_url)
+                    m_url = entry.get('webpage_url') or entry.get('url')
+                    m_title = entry.get('title')
+                    if m_url:
+                        push_url_to_liquidsoap(m_url, title=m_title)
                         count += 1
             return {"status": "success", "message": f"✅ Adicionadas {count} músicas à fila!"}
         else:
             original_url = data.get('webpage_url') or url
-            push_url_to_liquidsoap(original_url)
-            return {"status": "success", "message": f"✅ Adicionada à fila: **{data.get('title')}**"}
+            m_title = data.get('title')
+            push_url_to_liquidsoap(original_url, title=m_title)
+            return {"status": "success", "message": f"✅ Adicionada à fila: **{m_title}**"}
     except Exception as e:
         return {"status": "error", "message": f"❌ Erro: {str(e)}"}
 
@@ -176,14 +184,16 @@ def api_play():
             for entry in data['entries']:
                 if entry:
                     original_url = entry.get('webpage_url') or entry.get('url')
+                    m_title = entry.get('title')
                     if original_url:
-                        push_url_to_liquidsoap(original_url)
+                        push_url_to_liquidsoap(original_url, title=m_title)
                         count += 1
             return jsonify({"status": "success", "message": f"Adicionadas {count} músicas da playlist!"})
         else:
             original_url = data.get('webpage_url') or url
-            push_url_to_liquidsoap(original_url)
-            return jsonify({"status": "success", "message": f"Adicionada: {data.get('title')}"})
+            m_title = data.get('title')
+            push_url_to_liquidsoap(original_url, title=m_title)
+            return jsonify({"status": "success", "message": f"Adicionada: {m_title}"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

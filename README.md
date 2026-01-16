@@ -29,8 +29,6 @@ Sistema de rádio personalizada para Euro Truck Simulator 2, com integração co
    cp .env.example .env
    ```
 
-3. **Importante**: Atualmente, as senhas do Icecast no arquivo `icecast/icecast.xml` precisam coincidir com as do seu `.env`. Se você alterar as senhas no `.env`, lembre-se de atualizar também as tags `<source-password>` e `<admin-password>` em `icecast/icecast.xml`.
-
 ## 🚀 Como Rodar
 
 ### Modo Desenvolvimento / Local

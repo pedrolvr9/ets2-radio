@@ -9,7 +9,10 @@ services:
     ports:
       - "24015:9090"
     volumes:
-      - ./icecast/icecast.xml:/etc/icecast2/icecast.xml:ro
+      - ./icecast/icecast.xml:/usr/share/icecast/icecast.xml.template:ro
+    entrypoint: >
+      sh -c "sed \"s/@ICECAST_SOURCE_PASSWORD@/\$ICECAST_SOURCE_PASSWORD/g; s/@ICECAST_ADMIN_PASSWORD@/\$ICECAST_ADMIN_PASSWORD/g\" /usr/share/icecast/icecast.xml.template > /etc/icecast2/icecast.xml && 
+             exec icecast -c /etc/icecast2/icecast.xml"
     restart: unless-stopped
 
   liquidsoap:

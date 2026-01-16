@@ -8,8 +8,8 @@
   </limits>
 
   <authentication>
-    <source-password>hackme</source-password>
-    <admin-password>hackme</admin-password>
+    <source-password>@ICECAST_SOURCE_PASSWORD@</source-password>
+    <admin-password>@ICECAST_ADMIN_PASSWORD@</admin-password>
   </authentication>
 
   <listen-socket>

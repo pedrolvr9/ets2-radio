@@ -13,6 +13,12 @@ for arg in "$@"; do
     fi
     args+=("$arg")
 done
+# Decodifica cookies em Base64 se a variável existir
+if [ -n "$YT_COOKIES_BASE64" ]; then
+    echo "Decodificando cookies do YouTube..."
+    echo "$YT_COOKIES_BASE64" | base64 -d > /data/cookies.txt
+fi
+
 # Agora forçamos o nosso formato ideal e tentamos impersonar um cliente iOS para evitar bloqueio
 if [ -f "/data/cookies.txt" ]; then
     exec /usr/bin/yt-dlp --cookies /data/cookies.txt --extractor-args "youtube:player_client=ios,android" -f "bestaudio/best" "${args[@]}"

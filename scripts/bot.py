@@ -120,6 +120,18 @@ ytdl_format_options = {
     }
 }
 
+# Suporte a cookies via Base64 para bypass de bloqueio
+import base64 as b64
+yt_cookies_base64 = os.getenv('YT_COOKIES_BASE64')
+if yt_cookies_base64:
+    try:
+        cookies_data = b64.b64decode(yt_cookies_base64)
+        with open('/data/cookies.txt', 'wb') as f:
+            f.write(cookies_data)
+        print("🍪 Cookies do YouTube decodificados e salvos com sucesso.", flush=True)
+    except Exception as e:
+        print(f"❌ Erro ao decodificar YT_COOKIES_BASE64: {e}", flush=True)
+
 # Verifica se existe arquivo de cookies para evitar bloqueio do YouTube
 if os.path.exists('/data/cookies.txt'):
     ytdl_format_options['cookiefile'] = '/data/cookies.txt'

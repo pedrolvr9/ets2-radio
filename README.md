@@ -52,11 +52,14 @@ Um sistema completo de rádio personalizada para o **Euro Truck Simulator 2**, i
 
    Edite o `.env` e insira seu `DISCORD_TOKEN` e as senhas desejadas para o Icecast.
 
-3. **(Opcional) Bypass de Cookies:**
+3. **(Opcional) Bypass de Cookies (Base64):**
    Se o YouTube bloquear seu servidor (erro: _Sign in to confirm you're not a bot_):
-   - Use a extensão **Get cookies.txt LOCALLY** no navegador.
-   - Exporte os cookies do YouTube.
-   - Salve como `data/cookies.txt`. O sistema carregará automaticamente.
+   - Exporte os cookies do YouTube (extensão "Get cookies.txt LOCALLY").
+   - Converta o conteúdo do arquivo para Base64. 
+     - No Linux/Mac: `cat cookies.txt | base64 -w 0`
+     - No Windows (PowerShell): `[Convert]::ToBase64String([IO.File]::ReadAllBytes("cookies.txt"))`
+   - Adicione o resultado na variável `YT_COOKIES_BASE64` no seu `.env` ou no painel do Coolify.
+   - O sistema criará o arquivo `data/cookies.txt` automaticamente.
 
 ---
 

@@ -6,7 +6,7 @@ settings.protocol.youtube_dl.timeout := 600.0
 settings.protocol.youtube_dl.path := "/usr/local/bin/yt-dlp-audio"
 
 # Carregar senhas do ambiente
-icecast_password = os.getenv("ICECAST_SOURCE_PASSWORD")
+icecast_password = environment.get("ICECAST_SOURCE_PASSWORD")
 icecast_password = if icecast_password == "" then "hackme" else icecast_password end
 
 # Habilitar controle via telnet (porta interna para o bot)

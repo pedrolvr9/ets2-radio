@@ -24,6 +24,14 @@
     <loglevel>3</loglevel>
   </logging>
 
+  <security>
+    <chroot>0</chroot>
+    <changeowner>
+      <user>icecast2</user>
+      <group>icecast</group>
+    </changeowner>
+  </security>
+
   <fileserve>1</fileserve>
 
   <mount type="normal">
